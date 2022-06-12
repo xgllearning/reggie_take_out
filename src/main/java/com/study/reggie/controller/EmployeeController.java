@@ -70,4 +70,14 @@ public class EmployeeController {
         employeeService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
     }
+
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+        log.info(employee.toString());
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateUser(empId);
+        employee.setUpdateTime(LocalDateTime.now());
+        employeeService.updateById(employee);
+        return R.success("员工信息修改成功");
+    }
 }
