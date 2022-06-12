@@ -7,4 +7,6 @@ import com.study.reggie.entity.Employee;
 public interface EmployeeService extends IService<Employee> {
     R login(Employee employee);
 
+
+
 }

@@ -7,6 +7,7 @@ import com.study.reggie.common.R;
 import com.study.reggie.entity.Employee;
 import com.study.reggie.mapper.EmployeeMapper;
 import com.study.reggie.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +17,16 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
-
+    /**
+     * 登录逻辑
+     * @param employee
+     * @return
+     */
     @Override
     public R login(Employee employee) {
         //①. 先获取用户输入的密码，然后通过工具类将页面提交的密码password进行md5加密处理, 得到加密后的字符串
@@ -47,4 +54,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         session.setAttribute("employee",emp.getId());
         return R.success(emp);
     }
+
+
 }
