@@ -50,5 +50,15 @@ public class CategoryController {
         categoryService.page(categoryPage,queryWrapper);
         return R.success(categoryPage);
     }
+    /**
+     * 根据id删除分类
+     * @param id
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(Long id){
+        log.info("ids:{}",id);
 
+        return  categoryService.removeById(id);
+    }
 }
