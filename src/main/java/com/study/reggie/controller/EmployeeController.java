@@ -48,15 +48,15 @@ public class EmployeeController {
         log.info("新增员工，员工信息：{}",employee.toString());
         //设置初始密码123456，需要进行md5加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
         //获取request、session,以及存储在session中的id
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        HttpSession session = ((ServletRequestAttributes) requestAttributes).getRequest().getSession();
+//        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+//        HttpSession session = ((ServletRequestAttributes) requestAttributes).getRequest().getSession();
         //获得当前登录用户的id
-        Long empId = (Long) session.getAttribute("employee");
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+//        Long empId = (Long) session.getAttribute("employee");
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
         employeeService.save(employee);
         return R.success("新增员工成功");
     }
@@ -66,7 +66,8 @@ public class EmployeeController {
         log.info("page = {},pageSize = {},name = {}" ,page,pageSize,name);
         LambdaQueryWrapper<Employee> queryWrapper = Wrappers.lambdaQuery(Employee.class);
         Page<Employee> pageInfo = new Page<>(page, pageSize);
-        queryWrapper.like(StringUtils.isNotBlank(name),Employee::getName,name);//查询条件
+        queryWrapper.like(StringUtils.isNotBlank(name),Employee::getName,name)
+                .orderByDesc(Employee::getCreateTime);//查询条件
         employeeService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
     }
@@ -75,8 +76,8 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
         log.info(employee.toString());
         Long empId = (Long) request.getSession().getAttribute("employee");
-        employee.setUpdateUser(empId);
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(empId);
+//        employee.setUpdateTime(LocalDateTime.now());
         employeeService.updateById(employee);
         return R.success("员工信息修改成功");
     }
