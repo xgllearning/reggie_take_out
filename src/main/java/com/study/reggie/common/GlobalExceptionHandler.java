@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         //判断捕获的异常是否包含Duplication entry信息
         if (ex.getMessage().contains("Duplicate entry")){
             String[] split = ex.getMessage().split(" ");
-            String msg = split[2] + "账号已存在";
+            String msg = split[2] + "已存在";
             return R.error(msg);
         }
         return R.error("未知错误");

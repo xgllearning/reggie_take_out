@@ -48,6 +48,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         if (emp.getStatus()==0){
             return R.error("查询失败,status=0");
         }
+        
         //⑥. 登录成功，将员工id存入Session, 并返回登录成功结果
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpSession session = ((ServletRequestAttributes) requestAttributes).getRequest().getSession();
