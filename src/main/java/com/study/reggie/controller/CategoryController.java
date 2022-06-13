@@ -45,7 +45,7 @@ public class CategoryController {
         //条件构造器
         LambdaQueryWrapper<Category> queryWrapper = Wrappers.lambdaQuery(Category.class);
         //添加排序条件，根据sort进行排序
-        queryWrapper.orderByDesc(Category::getSort);
+        queryWrapper.orderByAsc(Category::getSort);
         //分页查询
         categoryService.page(categoryPage,queryWrapper);
         return R.success(categoryPage);
@@ -58,7 +58,17 @@ public class CategoryController {
     @DeleteMapping
     public R<String> delete(Long id){
         log.info("ids:{}",id);
-
         return  categoryService.removeById(id);
+    }
+    /**
+     * 根据id修改分类信息
+     * @param category
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody Category category){
+        log.info("修改分类信息：{}",category);
+        categoryService.updateById(category);
+        return R.success("修改分类信息成功");
     }
 }
