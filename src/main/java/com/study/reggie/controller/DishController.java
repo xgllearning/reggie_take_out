@@ -152,11 +152,13 @@ public class DishController {
         //根据dish中的categoryId进行查询菜品名称
         LambdaQueryWrapper<Dish> queryWrapper = Wrappers.lambdaQuery(Dish.class);
         //查询条件：status=1且CategoryId相等
-        queryWrapper.eq(Dish::getStatus,"1").eq(Dish::getCategoryId,dish.getCategoryId());
+        queryWrapper.eq(Dish::getStatus,1).eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
         //添加排序条件
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
 
         return R.success(list);
     }
+
+
 }
