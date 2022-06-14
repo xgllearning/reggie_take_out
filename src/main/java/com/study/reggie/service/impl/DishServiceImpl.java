@@ -1,6 +1,8 @@
 package com.study.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.reggie.common.R;
@@ -22,7 +24,11 @@ import java.util.stream.Collectors;
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
     @Autowired
     private DishFlavorService dishFlavorService;
-
+    /**
+     * 新增菜品
+     * @param dishDto
+     * @return
+     */
     @Override
     @Transactional
     public void saveDishAndFlavor(DishDto dishDto) {
@@ -84,6 +90,46 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishFlavorService.saveBatch(flavors);
 
     }
+    /**
+     * 停售、起售、批量停售、批量起售
+     * @param ids
+     * @param status
+     * @return
+     */
+    @Override
+    public R<String> status(List<Long> ids, Integer status) {
+        UpdateWrapper<Dish> updateWrapper = new UpdateWrapper<>();
+        if (status==0){
+            //需要禁用
+            for (Long id : ids) {
+                updateWrapper.eq("id",id).set("status",status);
+                this.update(updateWrapper);
+                updateWrapper.clear();
+            }
+            return R.success("禁用成功");
+        }
+        //启用
+        for (Long id : ids) {
+            updateWrapper.eq("id",id).set("status",status);
+            this.update(updateWrapper);
+            updateWrapper.clear();
+        }
+        return R.success("启用成功");
+    }
+    /**
+     * 单个删除、批量删除
+     * @param ids
+     * @return
+     */
+    @Override
+    public R<String> delete(List<Long> ids) {
+        LambdaQueryWrapper<Dish> queryWrapper = Wrappers.lambdaQuery(Dish.class);
+        for (Long id : ids) {
+            queryWrapper.eq(Dish::getId,id);
+            this.remove(queryWrapper);
+            queryWrapper.clear();
+        }
 
-
+        return R.success("删除成功");
+    }
 }

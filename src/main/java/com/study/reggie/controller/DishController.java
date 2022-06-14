@@ -111,4 +111,33 @@ public class DishController {
 
         return R.success("修改菜品成功");
     }
+
+    /**
+     * 停售、起售、批量停售、批量起售
+     * @param ids
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")//@PathVariable Integer status,
+    public R<String> status(@RequestParam List<Long> ids,@PathVariable Integer status){
+
+        log.info("ids:{}",ids);
+        log.info("status:{}",status);
+
+        return dishService.status(ids,status);
+    }
+
+    /**
+     * 单个删除、批量删除
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+
+        log.info("ids:{}",ids);
+
+
+        return dishService.delete(ids);
+    }
 }
