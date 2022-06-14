@@ -140,4 +140,23 @@ public class DishController {
 
         return dishService.delete(ids);
     }
+
+    /**
+     * 根据条件查询对应的菜品数据
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+        log.info("dish:{}",dish);
+        //根据dish中的categoryId进行查询菜品名称
+        LambdaQueryWrapper<Dish> queryWrapper = Wrappers.lambdaQuery(Dish.class);
+        //查询条件：status=1且CategoryId相等
+        queryWrapper.eq(Dish::getStatus,"1").eq(Dish::getCategoryId,dish.getCategoryId());
+        //添加排序条件
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+
+        return R.success(list);
+    }
 }
