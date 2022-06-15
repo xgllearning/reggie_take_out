@@ -9,10 +9,10 @@ import com.study.reggie.entity.ShoppingCart;
 import com.study.reggie.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -21,7 +21,11 @@ public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-
+    /**
+     * 添加购物车
+     * @param shoppingCart
+     * @return
+     */
     @PostMapping("/add")
     public R<ShoppingCart> add(@RequestBody ShoppingCart shoppingCart){
 
@@ -54,10 +58,41 @@ public class ShoppingCartController {
         }else {
             //数据库不存在该数据对象，执行添加操作，且初始值为1
             shoppingCart.setNumber(1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartService.save(shoppingCart);
             shoppingCartServiceOne=shoppingCart;
         }
         //shoppingCartServiceOne与数据库数据保持一致
         return R.success(shoppingCartServiceOne);
+    }
+
+    /**
+     * 查看购物车
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<ShoppingCart>> list(){
+        log.info("查看购物车...");
+        //根据用户Id进行查询
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
+        //排序，后添加的在上面显示
+        queryWrapper.orderByAsc(ShoppingCart::getCreateTime);
+        List<ShoppingCart> list = shoppingCartService.list(queryWrapper);
+
+        return R.success(list);
+    }
+    /**
+     * 清空购物车
+     * @return
+     */
+    @DeleteMapping("/clean")
+    public R<String> clean(){
+        //SQL:delete from shopping_cart where user_id = ?
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
+
+        shoppingCartService.remove(queryWrapper);
+        return R.success("清空购物车成功");
     }
 }
