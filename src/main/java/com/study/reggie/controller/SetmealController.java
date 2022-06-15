@@ -102,4 +102,19 @@ public class SetmealController {
         log.info("ids:{}",ids);
         return setmealService.removeSetmealAndDish(ids);
     }
+
+    /**
+     * 根据条件查询套餐信息
+     * @param setmeal
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal){
+        log.info("setmeal:{}",setmeal);
+        LambdaQueryWrapper<Setmeal> queryWrapper = Wrappers.lambdaQuery(Setmeal.class);
+        queryWrapper.eq(setmeal.getCategoryId()!=null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        queryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
+        List<Setmeal> setmealList = setmealService.list(queryWrapper);
+        return R.success(setmealList);
+    }
 }
