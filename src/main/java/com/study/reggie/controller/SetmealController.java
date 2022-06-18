@@ -14,6 +14,8 @@ import com.study.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,8 @@ public class SetmealController {
      * @param setmealDto
      */
     @PostMapping
-    private R<String> save(@RequestBody SetmealDto setmealDto){
+    @CacheEvict(value = "setmealCache",allEntries = true)//清理setmealCache下的所有缓存数据
+    public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("setmealDto:{}",setmealDto);
 
         return setmealService.saveSetmealAndSetmealDish(setmealDto);
@@ -98,17 +101,19 @@ public class SetmealController {
 
 
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)//清理setmealCache下的所有缓存数据
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
         return setmealService.removeSetmealAndDish(ids);
     }
 
     /**
-     * 根据条件查询套餐信息
+     * 根据条件查询套餐信息,查询时把返回数据放入缓存中
      * @param setmeal
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId + '_' + #setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal){
         log.info("setmeal:{}",setmeal);
         LambdaQueryWrapper<Setmeal> queryWrapper = Wrappers.lambdaQuery(Setmeal.class);
